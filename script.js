@@ -6,7 +6,7 @@
 const HERO_VIDEO = "";         // 16:9 desktop version, e.g. "assets/videos/presenter.mp4"
 const HERO_VIDEO_MOBILE = "";  // 9:16 phone version, e.g. "assets/videos/presenter-mobile.mp4"
 
-// Past ads shown in the moving strips (4:3). Leave `src` empty to show a placeholder photo.
+// Past ads shown in the moving strips (3:4 portrait). Leave `src` empty to show a placeholder photo.
 const ADS = [
   { label: "Candle",         src: "" },
   { label: "Brewery",        src: "" },
@@ -67,7 +67,7 @@ if (HERO_VIDEO || HERO_VIDEO_MOBILE) {
 // ---------- Build strips ----------
 // Placeholder photos (picsum.photos) until real ad videos are added.
 const placeholder = (label, n) =>
-  `https://picsum.photos/seed/${encodeURIComponent(label.toLowerCase())}-${n}/480/360`;
+  `https://picsum.photos/seed/${encodeURIComponent(label.toLowerCase())}-${n}/360/480`;
 
 function buildTrack(track, offset, repeats) {
   const list = [];
