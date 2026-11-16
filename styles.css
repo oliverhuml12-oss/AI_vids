@@ -133,30 +133,13 @@ main { position: relative; z-index: 3; }
 .work-stage {
   position: absolute; left: 0; right: 0; top: calc(-1 * var(--bleed)); height: calc(var(--h) + 2 * var(--bleed));
   overflow: hidden;
-  /* ads fade out toward the left/right edges... */
+  /* ads fade out toward the left/right edges (cheap: a mask, no blur) */
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
 }
-/* ...and go out of focus progressively, like a lens: stacked blur layers,
-   each one stronger and covering a narrower band toward the edge */
-.edge-blur { position: absolute; top: 0; bottom: 0; width: 34%; z-index: 5; pointer-events: none; }
-.edge-blur.left { left: 0; }
-.edge-blur.right { right: 0; transform: scaleX(-1); }
-.edge-blur i {
-  position: absolute; inset: 0;
-  backdrop-filter: blur(var(--b)); -webkit-backdrop-filter: blur(var(--b));
-  -webkit-mask-image: linear-gradient(90deg, #000 var(--s), transparent var(--e));
-  mask-image: linear-gradient(90deg, #000 var(--s), transparent var(--e));
-}
-.edge-blur i:nth-child(1) { --b: 1px;  --s: 60%; --e: 100%; }
-.edge-blur i:nth-child(2) { --b: 2px;  --s: 48%; --e: 85%; }
-.edge-blur i:nth-child(3) { --b: 4px;  --s: 36%; --e: 70%; }
-.edge-blur i:nth-child(4) { --b: 8px;  --s: 24%; --e: 55%; }
-.edge-blur i:nth-child(5) { --b: 16px; --s: 12%; --e: 40%; }
-.edge-blur i:nth-child(6) { --b: 32px; --s: 0%;  --e: 25%; }
 .strip { position: absolute; left: -25%; width: 150%; transform-origin: 50% 50%; }
 .strip-front { top: calc(var(--bleed) + var(--h) * 0.18); transform: rotate(6deg); z-index: 2; }
-.strip-back  { top: calc(var(--bleed) + var(--h) * 0.5); transform: rotate(-7deg); z-index: 1; filter: brightness(.6) blur(.6px); }
+.strip-back  { top: calc(var(--bleed) + var(--h) * 0.5); transform: rotate(-7deg); z-index: 1; filter: brightness(.6); }
 .track { display: flex; gap: 18px; will-change: transform; }
 .strip-back .track { gap: 14px; }
 
