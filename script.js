@@ -2,10 +2,11 @@
    CONFIG — swap in real files when they're ready
    ========================================================= */
 
-// AI presenter video for the hero (e.g. "assets/videos/presenter.mp4"). Empty = placeholder.
-const HERO_VIDEO = "";
+// AI presenter video for the hero. Empty = placeholder photo.
+const HERO_VIDEO = "";         // 16:9 desktop version, e.g. "assets/videos/presenter.mp4"
+const HERO_VIDEO_MOBILE = "";  // 9:16 phone version, e.g. "assets/videos/presenter-mobile.mp4"
 
-// Past ads shown in the moving strips. Leave `src` empty to show a placeholder photo.
+// Past ads shown in the moving strips (4:3). Leave `src` empty to show a placeholder photo.
 const ADS = [
   { label: "Candle",         src: "" },
   { label: "Brewery",        src: "" },
@@ -40,17 +41,22 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").match
 })();
 
 // ---------- Hero video ----------
-if (HERO_VIDEO) {
+const mobileQuery = window.matchMedia("(orientation: portrait) and (max-width: 820px)");
+if (HERO_VIDEO || HERO_VIDEO_MOBILE) {
   const wrap = document.getElementById("heroVideo");
+  const btn = wrap.querySelector(".play");
   const v = document.createElement("video");
-  v.src = HERO_VIDEO;
   v.playsInline = true;
   v.preload = "metadata";
   v.setAttribute("aria-label", "Intro video");
+  const pickSource = () => {
+    const src = (mobileQuery.matches ? HERO_VIDEO_MOBILE : HERO_VIDEO) || HERO_VIDEO || HERO_VIDEO_MOBILE;
+    if (v.getAttribute("src") !== src) { v.src = src; btn.style.opacity = "1"; }
+  };
   wrap.prepend(v);
-  wrap.querySelector(".hero-photo")?.remove();
-  wrap.querySelector(".badge-placeholder")?.remove();
-  const btn = wrap.querySelector(".play");
+  wrap.querySelector(".hero-photo-wrap")?.remove();
+  pickSource();
+  mobileQuery.addEventListener("change", pickSource);
   btn.addEventListener("click", () => {
     if (v.paused) { v.play(); btn.style.opacity = "0"; }
     else { v.pause(); btn.style.opacity = "1"; }
@@ -61,7 +67,7 @@ if (HERO_VIDEO) {
 // ---------- Build strips ----------
 // Placeholder photos (picsum.photos) until real ad videos are added.
 const placeholder = (label, n) =>
-  `https://picsum.photos/seed/${encodeURIComponent(label.toLowerCase())}-${n}/360/640`;
+  `https://picsum.photos/seed/${encodeURIComponent(label.toLowerCase())}-${n}/480/360`;
 
 function buildTrack(track, offset, repeats) {
   const list = [];

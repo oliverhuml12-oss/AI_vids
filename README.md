@@ -5,8 +5,8 @@ Static one-page site (HTML + CSS + JS, no build step). Open `index.html` in a br
 ## Swap in real content
 Everything lives at the top of `script.js`:
 
-- `HERO_VIDEO`: path to the AI presenter video, e.g. `assets/videos/presenter.mp4`. While it's empty, the hero shows a placeholder photo (picsum.photos).
-- `ADS`: the past ads in the two moving strips. Add a `src` such as `assets/videos/candle.mp4` to each one. Use 9:16 MP4s and keep them short and small (under ~3 MB). They play muted on a loop, and only while they're on screen.
+- `HERO_VIDEO` (16:9, desktop) and `HERO_VIDEO_MOBILE` (9:16, phones in portrait): the AI presenter video. The page picks the right one automatically. While they're empty, the hero shows a placeholder photo (picsum.photos).
+- `ADS`: the past ads in the two moving strips. Add a `src` such as `assets/videos/candle.mp4` to each one. Use 4:3 MP4s and keep them short and small (under ~3 MB). They play muted on a loop, and only while they're on screen.
 
 Put the video files in `assets/videos/`.
 
@@ -16,4 +16,4 @@ Put the video files in `assets/videos/`.
 - The info section is still placeholder blocks.
 
 ## Note
-Keep the "AI generated" badge on the presenter video. It's there for the EU AI Act Art. 50 visible-disclosure rule.
+Under EU AI Act Art. 50, an AI presenter needs a visible "AI generated" label from the first frame. Burn it into the presenter videos themselves.
