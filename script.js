@@ -14,19 +14,20 @@ const HERO_POSTER_MOBILE = "assets/videos/presenter-mobile.jpg";
 //   poster    – still frame shown until the video starts
 // Current files are PLACEHOLDER loops made from Unsplash photos (see assets/videos/CREDITS.md).
 const clip = (n) => ({ src: `assets/videos/ad-${n}.mp4`, srcMobile: `assets/videos/ad-${n}-m.mp4`, poster: `assets/videos/ad-${n}.jpg` });
+const real = (name) => ({ src: `assets/videos/${name}.mp4`, srcMobile: `assets/videos/${name}-m.mp4`, poster: `assets/videos/${name}.jpg` });
 const ADS = [
+  { label: "Candle – Wood Cabin", ...real("candle-1") },  // real ad
   { label: "Café",           ...clip("01") },
   { label: "Coffee roaster", ...clip("02") },
-  { label: "Coffee beans",   ...clip("03") },
   { label: "Berries",        ...clip("04") },
   { label: "Restaurant",     ...clip("05") },
   { label: "Cozy morning",   ...clip("06") },
+  { label: "Candle – scents",    ...real("candle-2") },  // real ad
   { label: "Pet shop",       ...clip("07") },
   { label: "Pet food",       ...clip("08") },
   { label: "Bar",            ...clip("09") },
   { label: "Concert",        ...clip("10") },
   { label: "Shoes",          ...clip("11") },
-  { label: "Coffee",         ...clip("12") },
 ];
 
 /* ========================================================= */
