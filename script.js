@@ -9,22 +9,24 @@ const HERO_POSTER = "assets/videos/presenter.jpg";
 const HERO_POSTER_MOBILE = "assets/videos/presenter-mobile.jpg";
 
 // Past ads shown in the moving strips (3:4 portrait, short muted loops).
-//   src       – desktop file (e.g. 480×640)
-//   srcMobile – smaller file for phones (e.g. 360×480); falls back to src
-//   poster    – still image shown before the video plays (and on the back strip on phones)
-// The current files are generated TEST loops, swap them for real ads.
-const v = (n) => ({ src: `assets/videos/ad-0${n}.mp4`, srcMobile: `assets/videos/ad-0${n}-m.mp4`, poster: `assets/videos/ad-0${n}.jpg` });
+//   src       – desktop file (480×640)
+//   srcMobile – smaller file for phones (360×480); falls back to src
+//   poster    – still frame shown until the video starts
+// Current files are PLACEHOLDER loops made from Unsplash photos (see assets/videos/CREDITS.md).
+const clip = (n) => ({ src: `assets/videos/ad-${n}.mp4`, srcMobile: `assets/videos/ad-${n}-m.mp4`, poster: `assets/videos/ad-${n}.jpg` });
 const ADS = [
-  { label: "Candle",         ...v(1) },
-  { label: "Brewery",        ...v(2) },
-  { label: "Café",           ...v(3) },
-  { label: "Club night",     ...v(4) },
-  { label: "Pet shop",       ...v(5) },
-  { label: "Plumber",        ...v(6) },
-  { label: "Driving school", ...v(2) },
-  { label: "Coffee roaster", ...v(1) },
-  { label: "Bakery",         ...v(5) },
-  { label: "Festival",       ...v(3) },
+  { label: "Café",           ...clip("01") },
+  { label: "Coffee roaster", ...clip("02") },
+  { label: "Coffee beans",   ...clip("03") },
+  { label: "Berries",        ...clip("04") },
+  { label: "Restaurant",     ...clip("05") },
+  { label: "Cozy morning",   ...clip("06") },
+  { label: "Pet shop",       ...clip("07") },
+  { label: "Pet food",       ...clip("08") },
+  { label: "Bar",            ...clip("09") },
+  { label: "Concert",        ...clip("10") },
+  { label: "Shoes",          ...clip("11") },
+  { label: "Coffee",         ...clip("12") },
 ];
 
 /* ========================================================= */
@@ -169,20 +171,22 @@ if (isLite) {
   /* PHONES: compromise for smoothness
      - strips loop on their own with a CSS animation (runs on the GPU compositor,
        no JavaScript per frame, no scroll handler at all)
-     - 6 tiles per strip, duplicated once for a seamless loop
-     - only the front strip plays video (small mobile files); back strip = still posters */
-  const set = ADS.slice(0, 6);
-  tracks.forEach((t, i) => {
+     - 6 tiles per strip (different ads on each), duplicated once for a seamless loop
+     - small mobile video files, loaded/played only while on screen */
+  tracks.forEach((t) => {
     const front = t.dataset.dir === "1";
+    const set = front ? ADS.slice(0, 6) : ADS.slice(6, 12);
     const frag = document.createDocumentFragment();
-    [0, 1].forEach(() => set.forEach((ad) => frag.appendChild(makeTile(ad, { video: front, mobile: true }))));
+    [0, 1].forEach(() => set.forEach((ad) => frag.appendChild(makeTile(ad, { video: true, mobile: true }))));
     t.appendChild(frag);
   });
 } else {
-  /* DESKTOP: scroll-driven strips, video in both */
+  /* DESKTOP: scroll-driven strips, video in both (back strip starts halfway through the list) */
   tracks.forEach((t) => {
+    const front = t.dataset.dir === "1";
+    const list = front ? ADS : ADS.slice(6).concat(ADS.slice(0, 6));
     const frag = document.createDocumentFragment();
-    for (let r = 0; r < 3; r++) ADS.forEach((ad) => frag.appendChild(makeTile(ad, { video: true, mobile: false })));
+    for (let r = 0; r < 3; r++) list.forEach((ad) => frag.appendChild(makeTile(ad, { video: true, mobile: false })));
     t.appendChild(frag);
   });
 }

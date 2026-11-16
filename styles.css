@@ -133,7 +133,6 @@ main { position: relative; z-index: 3; }
   flex: none; position: relative; overflow: hidden; border-radius: 22px;
   width: clamp(140px, 14vw, 210px); aspect-ratio: 3 / 4;
   background: #111;
-  box-shadow: 0 18px 40px rgba(0,0,0,.5);
   contain: layout paint;
 }
 .strip-back .ad { width: clamp(100px, 10vw, 150px); border-radius: 16px; }
@@ -183,7 +182,6 @@ main { position: relative; z-index: 3; }
 
 @media (max-width: 640px) {
   .play { width: 64px; height: 64px; }
-  .ad { box-shadow: 0 10px 24px rgba(0,0,0,.45); }
   .tier.featured { box-shadow: none; }
   .nav { flex-wrap: nowrap; }
   .nav-links a:not(.btn-ghost) { display: none; }
@@ -200,7 +198,6 @@ main { position: relative; z-index: 3; }
 }
 .lite .work-stage::before { left: 0;  background: linear-gradient(90deg, var(--bg), rgba(4,6,5,0)); }
 .lite .work-stage::after  { right: 0; background: linear-gradient(270deg, var(--bg), rgba(4,6,5,0)); }
-.lite .ad { box-shadow: none; }
 .lite .strip-back .ad::after { background: rgba(0,0,0,.5); }
 /* self-running loop on the compositor; each track holds its tile set twice so -50% is seamless */
 .lite .track { width: max-content; gap: 0; animation: strip-ltr 38s linear infinite; }
