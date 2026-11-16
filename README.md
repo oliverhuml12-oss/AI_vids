@@ -11,7 +11,7 @@ Everything lives at the top of `script.js`:
 Put the video files in `assets/videos/`.
 
 ## Look
-- Black background with grainy green lights (an SVG noise displacement plus a film-grain overlay). The colours are CSS variables at the top of `styles.css` (`--green`, `--lime`, `--deep`).
+- Black background with grainy green lights, painted once into a canvas (see `paintLights()` in `script.js` for positions, colours and grain). No live blur or SVG filters, so it scrolls smoothly on phones.
 - Glass elements: nav, hero frame, info cards.
 - The info section is still placeholder blocks.
 
