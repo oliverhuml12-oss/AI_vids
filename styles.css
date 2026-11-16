@@ -125,6 +125,7 @@ main { position: relative; z-index: 3; }
   color: #7d8a82;
 }
 .statement .line { display: block; white-space: nowrap; }
+.statement .line:first-child { color: var(--text); }
 .statement .muted { color: #7d8a82; }
 
 /* Rotating phrase: all phrases share one grid cell; its width eases to the
