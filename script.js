@@ -164,10 +164,10 @@ if (HERO_VIDEO || HERO_VIDEO_MOBILE) {
     cur = (cur + 1) % els.length;
     const inn = els[cur];
     out.classList.remove("is-in"); out.classList.add("is-out");
-    setTimeout(() => out.classList.remove("is-out"), 900);   // reset below, while invisible
-    setTimeout(() => inn.classList.add("is-in"), 180);
+    setTimeout(() => out.classList.remove("is-out"), 600);   // reset below, while invisible
+    setTimeout(() => inn.classList.add("is-in"), 90);
   };
-  const start = () => { if (!timer) timer = setInterval(next, 2800); };
+  const start = () => { if (!timer) timer = setInterval(next, 2000); };
   const stop = () => { clearInterval(timer); timer = null; };
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop())).observe(box);

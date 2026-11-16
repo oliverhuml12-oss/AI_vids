@@ -119,7 +119,7 @@ main { position: relative; z-index: 3; }
   display: flex; flex-direction: column; align-items: center; gap: 18px;
 }
 .statement h2 {
-  margin: 0; text-align: left; /* left-aligned block, centred by the flex parent */
+  margin: 0; text-align: center;
   font-family: var(--display); font-weight: 500;
   font-size: clamp(30px, 6vw, 76px); line-height: 1.04; letter-spacing: -0.035em;
   color: var(--text);
@@ -127,17 +127,17 @@ main { position: relative; z-index: 3; }
 .statement .line { display: block; }
 .statement .muted { color: #7d8a82; }
 
-/* Rotating phrase: all phrases share one grid cell sized to the widest,
+/* Rotating phrase: own centred line; all phrases share one grid cell,
    so nothing around it ever moves. Letters swap with a staggered blur-rise. */
-.rotator { display: inline-grid; text-align: left; vertical-align: top; color: #b9f5d2; }
+.rotator { display: grid; justify-items: center; color: #b9f5d2; }
 .rotator .phrase { grid-area: 1 / 1; white-space: nowrap; }
 .rotator .ch {
   display: inline-block; opacity: 0; transform: translateY(.42em) rotateX(-60deg); filter: blur(10px);
-  transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .5s ease, filter .6s ease;
-  transition-delay: calc(var(--i) * 24ms);
+  transition: transform .42s cubic-bezier(.2,.8,.2,1), opacity .3s ease, filter .36s ease;
+  transition-delay: calc(var(--i) * 13ms);
 }
 .rotator .phrase.is-in .ch { opacity: 1; transform: none; filter: blur(0); }
-.rotator .phrase.is-out .ch { opacity: 0; transform: translateY(-.42em) rotateX(60deg); filter: blur(10px); transition-duration: .45s, .35s, .45s; }
+.rotator .phrase.is-out .ch { opacity: 0; transform: translateY(-.42em) rotateX(60deg); filter: blur(10px); transition-duration: .28s, .22s, .28s; }
 /* phones: same motion, no blur (cheaper) */
 .lite .rotator .ch { filter: none !important; }
 @media (prefers-reduced-motion: reduce) { .rotator .ch { transition: none; } }
