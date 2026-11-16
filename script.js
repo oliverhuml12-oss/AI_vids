@@ -5,7 +5,7 @@
 // AI presenter video for the hero (e.g. "assets/videos/presenter.mp4"). Empty = placeholder.
 const HERO_VIDEO = "";
 
-// Past ads shown in the moving strips. Leave `src` empty to show a placeholder tile.
+// Past ads shown in the moving strips. Leave `src` empty to show a placeholder photo.
 const ADS = [
   { label: "Candle",         src: "" },
   { label: "Brewery",        src: "" },
@@ -48,7 +48,7 @@ if (HERO_VIDEO) {
   v.preload = "metadata";
   v.setAttribute("aria-label", "Intro video");
   wrap.prepend(v);
-  wrap.querySelector(".silhouette")?.remove();
+  wrap.querySelector(".hero-photo")?.remove();
   wrap.querySelector(".badge-placeholder")?.remove();
   const btn = wrap.querySelector(".play");
   btn.addEventListener("click", () => {
@@ -59,12 +59,9 @@ if (HERO_VIDEO) {
 }
 
 // ---------- Build strips ----------
-const tint = (i) => {
-  const colors = ["#1fe07a88", "#a8ff3e66", "#ffffff22", "#0b8f5599"];
-  const c = colors[i % colors.length];
-  const x = 20 + ((i * 37) % 60);
-  return `radial-gradient(120% 70% at ${x}% 15%, ${c} 0%, transparent 60%), linear-gradient(165deg, #18201b 0%, #090c0a 100%)`;
-};
+// Placeholder photos (picsum.photos) until real ad videos are added.
+const placeholder = (label, n) =>
+  `https://picsum.photos/seed/${encodeURIComponent(label.toLowerCase())}-${n}/360/640`;
 
 function buildTrack(track, offset, repeats) {
   const list = [];
@@ -82,11 +79,12 @@ function buildTrack(track, offset, repeats) {
       v.setAttribute("aria-label", `${ad.label} ad`);
       el.appendChild(v);
     } else {
-      el.style.background = tint(i + offset);
-      const label = document.createElement("span");
-      label.className = "ad-label";
-      label.textContent = ad.label;
-      el.appendChild(label);
+      const img = document.createElement("img");
+      img.src = placeholder(ad.label, offset * 10 + Math.floor(i / ADS.length));
+      img.alt = `${ad.label} ad (placeholder)`;
+      img.loading = "lazy";
+      img.decoding = "async";
+      el.appendChild(img);
     }
     track.appendChild(el);
   });

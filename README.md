@@ -5,7 +5,7 @@ Static one-page site (HTML + CSS + JS, no build step). Open `index.html` in a br
 ## Swap in real content
 Everything lives at the top of `script.js`:
 
-- `HERO_VIDEO`: path to the AI presenter video, e.g. `assets/videos/presenter.mp4`. While it's empty, the hero shows a placeholder.
+- `HERO_VIDEO`: path to the AI presenter video, e.g. `assets/videos/presenter.mp4`. While it's empty, the hero shows a placeholder photo (picsum.photos).
 - `ADS`: the past ads in the two moving strips. Add a `src` such as `assets/videos/candle.mp4` to each one. Use 9:16 MP4s and keep them short and small (under ~3 MB). They play muted on a loop, and only while they're on screen.
 
 Put the video files in `assets/videos/`.
