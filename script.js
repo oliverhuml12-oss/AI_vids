@@ -3,27 +3,36 @@
    ========================================================= */
 
 // AI presenter video for the hero. Empty = placeholder photo.
-const HERO_VIDEO = "";         // 16:9 desktop version, e.g. "assets/videos/presenter.mp4"
-const HERO_VIDEO_MOBILE = "";  // 9:16 phone version, e.g. "assets/videos/presenter-mobile.mp4"
+const HERO_VIDEO = "assets/videos/presenter.mp4";               // 16:9 desktop version
+const HERO_VIDEO_MOBILE = "assets/videos/presenter-mobile.mp4"; // 9:16 phone version
+const HERO_POSTER = "assets/videos/presenter.jpg";
+const HERO_POSTER_MOBILE = "assets/videos/presenter-mobile.jpg";
 
-// Past ads shown in the moving strips (3:4 portrait). Leave `src` empty to show a placeholder photo.
+// Past ads shown in the moving strips (3:4 portrait, short muted loops).
+//   src       – desktop file (e.g. 480×640)
+//   srcMobile – smaller file for phones (e.g. 360×480); falls back to src
+//   poster    – still image shown before the video plays (and on the back strip on phones)
+// The current files are generated TEST loops, swap them for real ads.
+const v = (n) => ({ src: `assets/videos/ad-0${n}.mp4`, srcMobile: `assets/videos/ad-0${n}-m.mp4`, poster: `assets/videos/ad-0${n}.jpg` });
 const ADS = [
-  { label: "Candle",         src: "" },
-  { label: "Brewery",        src: "" },
-  { label: "Café",           src: "" },
-  { label: "Club night",     src: "" },
-  { label: "Pet shop",       src: "" },
-  { label: "Plumber",        src: "" },
-  { label: "Driving school", src: "" },
-  { label: "Coffee roaster", src: "" },
-  { label: "Bakery",         src: "" },
-  { label: "Festival",       src: "" },
+  { label: "Candle",         ...v(1) },
+  { label: "Brewery",        ...v(2) },
+  { label: "Café",           ...v(3) },
+  { label: "Club night",     ...v(4) },
+  { label: "Pet shop",       ...v(5) },
+  { label: "Plumber",        ...v(6) },
+  { label: "Driving school", ...v(2) },
+  { label: "Coffee roaster", ...v(1) },
+  { label: "Bakery",         ...v(5) },
+  { label: "Festival",       ...v(3) },
 ];
 
 /* ========================================================= */
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const isSmall = window.matchMedia("(max-width: 820px)").matches;
+// "lite" = phones/tablets: set by the inline script in <head>
+const isLite = document.documentElement.classList.contains("lite");
 
 // Older Safari (< 14) only has addListener on media queries
 const onMedia = (mq, fn) => (mq.addEventListener ? mq.addEventListener("change", fn) : mq.addListener(fn));
@@ -104,11 +113,14 @@ if (HERO_VIDEO || HERO_VIDEO_MOBILE) {
   const v = document.createElement("video");
   v.playsInline = true;
   v.setAttribute("playsinline", "");
-  v.preload = "metadata";
+  v.preload = isLite ? "none" : "metadata";
   v.setAttribute("aria-label", "Intro video");
   const pickSource = () => {
     const src = (mobileQuery.matches ? HERO_VIDEO_MOBILE : HERO_VIDEO) || HERO_VIDEO || HERO_VIDEO_MOBILE;
-    if (v.getAttribute("src") !== src) { v.src = src; btn.style.opacity = "1"; }
+    if (v.getAttribute("src") !== src) {
+      v.poster = (mobileQuery.matches ? HERO_POSTER_MOBILE : HERO_POSTER) || "";
+      v.src = src; btn.style.opacity = "1";
+    }
   };
   wrap.prepend(v);
   const ph = wrap.querySelector(".hero-photo-wrap");
@@ -123,63 +135,88 @@ if (HERO_VIDEO || HERO_VIDEO_MOBILE) {
 }
 
 // ---------- Build strips ----------
-// Placeholder photos (picsum.photos) until real ad videos are added.
-const placeholder = (label, n) =>
-  `https://picsum.photos/seed/${encodeURIComponent(label.toLowerCase())}-${n}/${isSmall ? "240/320" : "360/480"}`;
+const tracks = [...document.querySelectorAll(".track")];
+const work = document.getElementById("work");
 
-function buildTrack(track, offset, repeats) {
-  const frag = document.createDocumentFragment();
-  for (let r = 0; r < repeats; r++) {
-    ADS.forEach((ad) => {
-      const el = document.createElement("div");
-      el.className = "ad";
-      if (ad.src) {
-        const v = document.createElement("video");
-        v.src = ad.src;
-        v.muted = true;
-        v.loop = true;
-        v.playsInline = true;
-        v.setAttribute("muted", "");
-        v.setAttribute("playsinline", "");
-        v.preload = isSmall ? "none" : "metadata";
-        v.setAttribute("aria-label", `${ad.label} ad`);
-        el.appendChild(v);
-      } else {
-        const img = document.createElement("img");
-        img.src = placeholder(ad.label, offset * 10 + r);
-        img.alt = `${ad.label} ad (placeholder)`;
-        img.width = 360; img.height = 480;
-        img.loading = "lazy";
-        img.decoding = "async";
-        el.appendChild(img);
-      }
-      frag.appendChild(el);
-    });
+function makeTile(ad, { video, mobile }) {
+  const el = document.createElement("div");
+  el.className = "ad";
+  if (video && ad.src) {
+    const vid = document.createElement("video");
+    // iOS needs these as attributes, set before src, for silent inline playback
+    vid.setAttribute("muted", ""); vid.muted = true;
+    vid.setAttribute("playsinline", ""); vid.playsInline = true;
+    vid.loop = true;
+    vid.preload = "none";
+    vid.disablePictureInPicture = true;
+    if (ad.poster) vid.poster = ad.poster;
+    vid.dataset.src = (mobile && ad.srcMobile) || ad.src; // loaded only when on screen
+    vid.setAttribute("aria-label", `${ad.label} ad`);
+    el.appendChild(vid);
+  } else {
+    const img = document.createElement("img");
+    img.src = ad.poster || "";
+    img.alt = `${ad.label} ad`;
+    img.width = 360; img.height = 480;
+    img.loading = "lazy";
+    img.decoding = "async";
+    el.appendChild(img);
   }
-  track.appendChild(frag);
+  return el;
 }
 
-const tracks = [...document.querySelectorAll(".track")];
-// fewer tiles on phones: 2 rounds of ads already overfill a narrow screen
-tracks.forEach((t, i) => buildTrack(t, i, isSmall ? 2 : 3));
+if (isLite) {
+  /* PHONES: compromise for smoothness
+     - strips loop on their own with a CSS animation (runs on the GPU compositor,
+       no JavaScript per frame, no scroll handler at all)
+     - 6 tiles per strip, duplicated once for a seamless loop
+     - only the front strip plays video (small mobile files); back strip = still posters */
+  const set = ADS.slice(0, 6);
+  tracks.forEach((t, i) => {
+    const front = t.dataset.dir === "1";
+    const frag = document.createDocumentFragment();
+    [0, 1].forEach(() => set.forEach((ad) => frag.appendChild(makeTile(ad, { video: front, mobile: true }))));
+    t.appendChild(frag);
+  });
+} else {
+  /* DESKTOP: scroll-driven strips, video in both */
+  tracks.forEach((t) => {
+    const frag = document.createDocumentFragment();
+    for (let r = 0; r < 3; r++) ADS.forEach((ad) => frag.appendChild(makeTile(ad, { video: true, mobile: false })));
+    t.appendChild(frag);
+  });
+}
 
-// Play ad videos only while on screen (and load them only then)
+// Load + play each ad video only while it's on screen; pause (and keep it light) otherwise
+const videos = [...document.querySelectorAll(".ad video")];
 if ("IntersectionObserver" in window) {
   const vio = new IntersectionObserver((entries) => {
-    entries.forEach(({ target, isIntersecting }) => {
-      if (isIntersecting) { const p = target.play(); if (p) p.catch(() => {}); }
-      else target.pause();
+    entries.forEach(({ target: vid, isIntersecting }) => {
+      if (isIntersecting) {
+        if (!vid.src) vid.src = vid.dataset.src;
+        const p = vid.play(); if (p) p.catch(() => {});
+      } else if (!vid.paused) vid.pause();
     });
-  }, { threshold: 0.1 });
-  document.querySelectorAll(".ad video").forEach((v) => vio.observe(v));
+  }, { threshold: 0.05 });
+  videos.forEach((vid) => vio.observe(vid));
+} else {
+  videos.forEach((vid) => { vid.src = vid.dataset.src; vid.autoplay = true; });
 }
 
-// ---------- Scroll-driven movement ----------
+// Strips section in view? (pauses the phone animation when off screen)
+let workVisible = true, ticking = false;
+if ("IntersectionObserver" in window) {
+  new IntersectionObserver(([e]) => {
+    workVisible = e.isIntersecting;
+    work.classList.toggle("in-view", workVisible);
+    if (workVisible && !isLite) onScroll();
+  }, { rootMargin: "100px 0px" }).observe(work);
+} else work.classList.add("in-view");
+
+// ---------- Scroll-driven movement (desktop only) ----------
 // Front strip moves left→right, back strip right→left (slower), as you scroll.
 // Measurements are cached; each frame only sets a transform (no layout reads).
-const work = document.getElementById("work");
 let workTop = 0, workH = 0, vh = 0, trackW = [];
-let workVisible = true, ticking = false;
 
 function measure() {
   vh = window.innerHeight;
@@ -205,21 +242,18 @@ function onScroll() {
   if (workVisible && !ticking) { ticking = true; requestAnimationFrame(update); }
 }
 
-if ("IntersectionObserver" in window) {
-  // stop animating while the strips are off screen
-  new IntersectionObserver(([e]) => { workVisible = e.isIntersecting; if (workVisible) onScroll(); },
-    { rootMargin: "200px 0px" }).observe(work);
+function onResize() { if (!isLite) { measure(); update(); } schedulePaint(); }
+
+if (!isLite) {
+  measure();
+  update();
+  if (!reduceMotion) window.addEventListener("scroll", onScroll, { passive: true });
 }
-
-function onResize() { measure(); update(); schedulePaint(); }
-
-measure();
-update();
-if (!reduceMotion) window.addEventListener("scroll", onScroll, { passive: true });
 window.addEventListener("resize", onResize);
 window.addEventListener("orientationchange", onResize);
 // paint lights after fonts/layout settle so section positions are right
+const settle = () => { if (!isLite) { measure(); update(); } schedulePaint(); };
 if (document.readyState === "complete") schedulePaint();
-else window.addEventListener("load", () => { measure(); update(); schedulePaint(); });
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { measure(); schedulePaint(); });
+else window.addEventListener("load", settle);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(settle);
 schedulePaint();

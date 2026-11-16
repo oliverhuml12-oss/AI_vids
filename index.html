@@ -10,6 +10,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script>
+    // phones/tablets get the lighter "lite" version (see styles.css / script.js)
+    if (matchMedia("(max-width: 820px), (hover: none) and (pointer: coarse)").matches) document.documentElement.classList.add("lite");
+  </script>
 </head>
 <body>
 
