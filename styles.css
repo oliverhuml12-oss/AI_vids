@@ -118,14 +118,29 @@ main { position: relative; z-index: 3; }
   padding: clamp(40px, 8vw, 96px) 6% clamp(24px, 4vw, 48px);
   display: flex; flex-direction: column; align-items: center; gap: 18px;
 }
-.statement .label { color: #7d8a82; }
 .statement h2 {
-  margin: 0; max-width: 16ch;
+  margin: 0; text-align: left; /* left-aligned block, centred by the flex parent */
   font-family: var(--display); font-weight: 500;
-  font-size: clamp(34px, 6vw, 76px); line-height: 1.02; letter-spacing: -0.035em;
+  font-size: clamp(30px, 6vw, 76px); line-height: 1.04; letter-spacing: -0.035em;
   color: var(--text);
 }
-.statement h2 span { color: #7d8a82; }
+.statement .line { display: block; }
+.statement .muted { color: #7d8a82; }
+
+/* Rotating phrase: all phrases share one grid cell sized to the widest,
+   so nothing around it ever moves. Letters swap with a staggered blur-rise. */
+.rotator { display: inline-grid; text-align: left; vertical-align: top; color: #b9f5d2; }
+.rotator .phrase { grid-area: 1 / 1; white-space: nowrap; }
+.rotator .ch {
+  display: inline-block; opacity: 0; transform: translateY(.42em) rotateX(-60deg); filter: blur(10px);
+  transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .5s ease, filter .6s ease;
+  transition-delay: calc(var(--i) * 24ms);
+}
+.rotator .phrase.is-in .ch { opacity: 1; transform: none; filter: blur(0); }
+.rotator .phrase.is-out .ch { opacity: 0; transform: translateY(-.42em) rotateX(60deg); filter: blur(10px); transition-duration: .45s, .35s, .45s; }
+/* phones: same motion, no blur (cheaper) */
+.lite .rotator .ch { filter: none !important; }
+@media (prefers-reduced-motion: reduce) { .rotator .ch { transition: none; } }
 
 /* ---------- Work strips (videos only, no band) ---------- */
 .work { --h: clamp(560px, 62vw, 900px); --bleed: 220px; position: relative; z-index: 2; height: var(--h); }

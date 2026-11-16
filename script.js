@@ -137,6 +137,44 @@ if (HERO_VIDEO || HERO_VIDEO_MOBILE) {
   v.addEventListener("click", () => btn.click());
 }
 
+// ---------- Rotating phrase in the statement ----------
+(function rotator() {
+  const box = document.querySelector(".rotator");
+  if (!box) return;
+  const phrases = box.dataset.phrases.split("|");
+  box.textContent = "";
+  // build every phrase (all stacked in one grid cell → width of the widest, nothing shifts)
+  const els = phrases.map((text, k) => {
+    const ph = document.createElement("span");
+    ph.className = "phrase" + (k === 0 ? " is-in" : "");
+    [...text].forEach((c, i) => {
+      const ch = document.createElement("span");
+      ch.className = "ch";
+      ch.style.setProperty("--i", i);
+      ch.textContent = c === " " ? " " : c;
+      ph.appendChild(ch);
+    });
+    box.appendChild(ph);
+    return ph;
+  });
+  if (reduceMotion || els.length < 2) return;
+  let cur = 0, timer = null;
+  const next = () => {
+    const out = els[cur];
+    cur = (cur + 1) % els.length;
+    const inn = els[cur];
+    out.classList.remove("is-in"); out.classList.add("is-out");
+    setTimeout(() => out.classList.remove("is-out"), 900);   // reset below, while invisible
+    setTimeout(() => inn.classList.add("is-in"), 180);
+  };
+  const start = () => { if (!timer) timer = setInterval(next, 2800); };
+  const stop = () => { clearInterval(timer); timer = null; };
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop())).observe(box);
+  } else start();
+  document.addEventListener("visibilitychange", () => (document.hidden ? stop() : null));
+})();
+
 // ---------- Build strips ----------
 const tracks = [...document.querySelectorAll(".track")];
 const work = document.getElementById("work");
