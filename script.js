@@ -157,17 +157,23 @@ if (HERO_VIDEO || HERO_VIDEO_MOBILE) {
     box.appendChild(ph);
     return ph;
   });
-  if (reduceMotion || els.length < 2) return;
   let cur = 0, timer = null;
+  // cell width follows the current phrase, so the centred line re-centres smoothly
+  const fit = () => { box.style.width = els[cur].getBoundingClientRect().width + "px"; };
+  fit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  window.addEventListener("resize", fit);
+  if (reduceMotion || els.length < 2) return;
   const next = () => {
     const out = els[cur];
     cur = (cur + 1) % els.length;
     const inn = els[cur];
+    fit();
     out.classList.remove("is-in"); out.classList.add("is-out");
-    setTimeout(() => out.classList.remove("is-out"), 600);   // reset below, while invisible
-    setTimeout(() => inn.classList.add("is-in"), 90);
+    setTimeout(() => out.classList.remove("is-out"), 750);   // reset below, while invisible
+    setTimeout(() => inn.classList.add("is-in"), 135);
   };
-  const start = () => { if (!timer) timer = setInterval(next, 2000); };
+  const start = () => { if (!timer) timer = setInterval(next, 2500); };
   const stop = () => { clearInterval(timer); timer = null; };
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(([e]) => (e.isIntersecting ? start() : stop())).observe(box);

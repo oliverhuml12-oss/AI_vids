@@ -121,23 +121,27 @@ main { position: relative; z-index: 3; }
 .statement h2 {
   margin: 0; text-align: center;
   font-family: var(--display); font-weight: 500;
-  font-size: clamp(30px, 6vw, 76px); line-height: 1.04; letter-spacing: -0.035em;
-  color: var(--text);
+  font-size: clamp(22px, 6.6vw, 76px); line-height: 1.04; letter-spacing: -0.035em;
+  color: #7d8a82;
 }
-.statement .line { display: block; }
+.statement .line { display: block; white-space: nowrap; }
 .statement .muted { color: #7d8a82; }
 
-/* Rotating phrase: own centred line; all phrases share one grid cell,
-   so nothing around it ever moves. Letters swap with a staggered blur-rise. */
-.rotator { display: grid; justify-items: center; color: #b9f5d2; }
+/* Rotating phrase: all phrases share one grid cell; its width eases to the
+   current phrase so the whole line stays centred ("Without" glides smoothly).
+   Letters swap with a staggered blur-rise. */
+.rotator {
+  display: inline-grid; justify-items: start; text-align: left; vertical-align: top;
+  transition: width .6s cubic-bezier(.45,0,.2,1);
+}
 .rotator .phrase { grid-area: 1 / 1; white-space: nowrap; }
 .rotator .ch {
   display: inline-block; opacity: 0; transform: translateY(.42em) rotateX(-60deg); filter: blur(10px);
-  transition: transform .42s cubic-bezier(.2,.8,.2,1), opacity .3s ease, filter .36s ease;
-  transition-delay: calc(var(--i) * 13ms);
+  transition: transform .56s cubic-bezier(.2,.8,.2,1), opacity .4s ease, filter .48s ease;
+  transition-delay: calc(var(--i) * 18ms);
 }
 .rotator .phrase.is-in .ch { opacity: 1; transform: none; filter: blur(0); }
-.rotator .phrase.is-out .ch { opacity: 0; transform: translateY(-.42em) rotateX(60deg); filter: blur(10px); transition-duration: .28s, .22s, .28s; }
+.rotator .phrase.is-out .ch { opacity: 0; transform: translateY(-.42em) rotateX(60deg); filter: blur(10px); transition-duration: .36s, .28s, .36s; }
 /* phones: same motion, no blur (cheaper) */
 .lite .rotator .ch { filter: none !important; }
 @media (prefers-reduced-motion: reduce) { .rotator .ch { transition: none; } }
